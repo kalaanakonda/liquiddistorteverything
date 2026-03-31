@@ -1,0 +1,6 @@
+src/
+demo/
+*.html
+vite.config.ts
+tsconfig.json
+.claude/

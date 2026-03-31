@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>liquid-distort demo</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f5f2ed; font-family: sans-serif; cursor: crosshair; }
+
+  #stage {
+    width: 100%;
+    min-height: 100vh;
+    padding: 60px;
+  }
+
+  h1 { font-size: 6rem; line-height: 1; margin-bottom: 20px; }
+  h2 { font-size: 3rem; line-height: 1; margin: 40px 0 20px; }
+  p  { font-size: 1.2rem; max-width: 600px; line-height: 1.6; margin: 20px 0; }
+
+  .box {
+    width: 260px; height: 160px;
+    background: #d8d4cc; border-radius: 16px;
+    display: inline-block; margin: 16px;
+  }
+
+  /* ── Controls panel ── */
+  #controls {
+    position: fixed;
+    top: 16px; right: 16px;
+    bottom: 16px;
+    background: rgba(10,10,10,0.92);
+    color: #eee;
+    font-family: monospace;
+    font-size: 13px;
+    padding: 16px;
+    border-radius: 12px;
+    z-index: 9999;
+    width: 260px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+  }
+
+  #controls h3 { font-size: 14px; letter-spacing: 0.05em; color: #aaa; }
+
+  .row { display: flex; flex-direction: column; gap: 3px; }
+  .row label { color: #888; font-size: 11px; }
+  .row select,
+  .row input[type=range] { width: 100%; }
+  .row input[type=range] { accent-color: #7cf; }
+  .val { color: #7cf; float: right; }
+
+  .row select {
+    background: #222; color: #eee; border: 1px solid #444;
+    border-radius: 4px; padding: 2px 4px;
+  }
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <h1>liquid-distort</h1>
+  <p>Move your cursor over the page. Adjust options in the panel →</p>
+  <div class="box"></div>
+  <div class="box"></div>
+  <div class="box"></div>
+  <h2>Typography test</h2>
+  <p>The effect tracks the cursor and distorts everything behind it — text, shapes, images. All configurable.</p>
+  <div class="box"></div>
+  <div class="box"></div>
+  <div class="box"></div>
+  <h2>Bottom section</h2>
+  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Scroll down and the effect still tracks correctly anywhere on the page.</p>
+  <div class="box"></div>
+  <div class="box"></div>
+</div>
+
+<div id="controls">
+  <h3>liquid-distort options</h3>
+
+  <div class="row">
+    <label>shape</label>
+    <select id="c-shape">
+      <option value="circle" selected>circle</option>
+      <option value="ellipse">ellipse</option>
+      <option value="rect">rect</option>
+      <option value="roundedRect">roundedRect</option>
+    </select>
+  </div>
+
+  <div class="row">
+    <label>mode</label>
+    <select id="c-mode">
+      <option value="refract">refract</option>
+      <option value="attract" selected>attract</option>
+      <option value="swirl">swirl</option>
+      <option value="ripple">ripple</option>
+      <option value="wave">wave</option>
+    </select>
+  </div>
+
+  <div class="row">
+    <label>falloff</label>
+    <select id="c-falloff">
+      <option value="smoothstep" selected>smoothstep</option>
+      <option value="linear">linear</option>
+      <option value="exponential">exponential</option>
+      <option value="cosine">cosine</option>
+    </select>
+  </div>
+
+  <div class="row">
+    <label>trigger</label>
+    <select id="c-trigger">
+      <option value="always" selected>always</option>
+      <option value="hover">hover (over stage)</option>
+      <option value="click">click</option>
+    </select>
+  </div>
+
+  <div class="row">
+    <label>radius <span class="val" id="v-radius">193</span></label>
+    <input type="range" id="c-radius" min="20" max="300" value="193">
+  </div>
+
+  <div class="row">
+    <label>strength <span class="val" id="v-strength">72</span></label>
+    <input type="range" id="c-strength" min="0" max="200" value="72">
+  </div>
+
+  <div class="row">
+    <label>aspectRatio <span class="val" id="v-aspect">0.8</span></label>
+    <input type="range" id="c-aspect" min="0.2" max="4" step="0.1" value="0.8">
+  </div>
+
+  <div class="row">
+    <label>frequency <span class="val" id="v-freq">3</span></label>
+    <input type="range" id="c-freq" min="1" max="10" step="0.5" value="3">
+  </div>
+
+  <div class="row">
+    <label>follow lag <span class="val" id="v-follow">0.98</span></label>
+    <input type="range" id="c-follow" min="0" max="0.98" step="0.01" value="0.98">
+  </div>
+
+  <div class="row">
+    <label>decay (seconds) <span class="val" id="v-decay">0.9</span></label>
+    <input type="range" id="c-decay" min="0" max="5" step="0.1" value="0.9">
+  </div>
+
+  <div class="row">
+    <label>velocityBoost <span class="val" id="v-vboost">0.0</span></label>
+    <input type="range" id="c-vboost" min="0" max="3" step="0.1" value="0">
+  </div>
+
+  <div class="row">
+    <label>spring</label>
+    <select id="c-spring">
+      <option value="false">off</option>
+      <option value="true" selected>on</option>
+    </select>
+  </div>
+
+  <div class="row" style="border-top:1px solid #333;padding-top:10px;margin-top:4px;">
+    <label>tail strength <span class="val" id="v-tail">0.14</span></label>
+    <input type="range" id="c-tail" min="0" max="1" step="0.01" value="0.14">
+  </div>
+
+  <div class="row">
+    <label>tail length <span class="val" id="v-taillength">68</span></label>
+    <input type="range" id="c-taillength" min="4" max="80" step="1" value="68">
+  </div>
+</div>
+
+<script type="module">
+  import { LiquidDistort } from '../src/index.ts'
+
+  const stage = document.getElementById('stage')
+  let effect = new LiquidDistort(stage, {
+    mode: 'attract',
+    radius: 193,
+    strength: 72,
+    aspectRatio: 0.8,
+    follow: 0.98,
+    spring: true,
+    decay: 0.9,
+    tail: 0.14,
+    tailLength: 68,
+  })
+
+  function get(id) { return document.getElementById(id) }
+  function setVal(id, v) { get('v-' + id).textContent = v }
+
+  function update() {
+    effect.setOptions({
+      shape:        get('c-shape').value,
+      mode:         get('c-mode').value,
+      falloff:      get('c-falloff').value,
+      trigger:      get('c-trigger').value,
+      radius:       +get('c-radius').value,
+      strength:     +get('c-strength').value,
+      aspectRatio:  +get('c-aspect').value,
+      frequency:    +get('c-freq').value,
+      follow:       +get('c-follow').value,
+      decay:        +get('c-decay').value,
+      velocityBoost:+get('c-vboost').value,
+      spring:       get('c-spring').value === 'true',
+      tail:         +get('c-tail').value,
+      tailLength:   +get('c-taillength').value,
+    })
+    setVal('radius',     get('c-radius').value)
+    setVal('strength',   get('c-strength').value)
+    setVal('aspect',     (+get('c-aspect').value).toFixed(1))
+    setVal('freq',       get('c-freq').value)
+    setVal('follow',     (+get('c-follow').value).toFixed(2))
+    setVal('decay',      get('c-decay').value)
+    setVal('vboost',     (+get('c-vboost').value).toFixed(1))
+    setVal('tail',       (+get('c-tail').value).toFixed(2))
+    setVal('taillength', get('c-taillength').value)
+  }
+
+  document.querySelectorAll('#controls select, #controls input').forEach(el => {
+    el.addEventListener('input', update)
+  })
+</script>
+</body>
+</html>

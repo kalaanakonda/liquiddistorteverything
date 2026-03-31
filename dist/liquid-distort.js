@@ -1,0 +1,208 @@
+function Y(t, i, e, h, c) {
+  switch (e) {
+    case "circle":
+      return Math.sqrt(t * t + i * i);
+    case "ellipse": {
+      const s = t / h;
+      return Math.sqrt(s * s + i * i);
+    }
+    case "rect":
+      return Math.max(Math.abs(t / h), Math.abs(i));
+    case "roundedRect": {
+      const s = Math.min(0.99, Math.max(0, c)), r = h, n = 1, o = Math.abs(t / r) - (1 - s), a = Math.abs(i / n) - (1 - s), f = Math.sqrt(
+        Math.max(o, 0) * Math.max(o, 0) + Math.max(a, 0) * Math.max(a, 0)
+      ), g = Math.min(Math.max(o, a), 0);
+      return (f + g) / s;
+    }
+  }
+}
+function H(t, i) {
+  const e = Math.min(1, Math.max(0, t));
+  switch (i) {
+    case "smoothstep":
+      return 1 - e * e * (3 - 2 * e);
+    case "linear":
+      return 1 - e;
+    case "exponential":
+      return 1 - Math.pow(e, 2.5);
+    case "cosine":
+      return (1 + Math.cos(Math.PI * e)) * 0.5;
+  }
+}
+function N(t, i, e, h, c, s) {
+  const r = e + 1e-4;
+  switch (c) {
+    case "refract": {
+      const n = t / r * 0.7 * h, o = i / r * 0.7 * h;
+      return [n, o];
+    }
+    case "attract": {
+      const n = -(t / r) * 0.7 * h, o = -(i / r) * 0.7 * h;
+      return [n, o];
+    }
+    case "swirl": {
+      const n = -i / r * 0.7 * h, o = t / r * 0.7 * h;
+      return [n, o];
+    }
+    case "ripple": {
+      const n = Math.sin(e * s * Math.PI), o = t / r * n * 0.7 * h, a = i / r * n * 0.7 * h;
+      return [o, a];
+    }
+    case "wave": {
+      const n = Math.sin(t * s * Math.PI), o = 0, a = n * 0.7 * h;
+      return [o, a];
+    }
+  }
+}
+function _(t, i) {
+  return {
+    x: t,
+    y: i,
+    vx: 0,
+    vy: 0,
+    strengthMult: 1,
+    lastMoveTime: performance.now(),
+    prevMouseX: t,
+    prevMouseY: i,
+    cursorSpeed: 0,
+    history: [],
+    _lastHistoryX: t,
+    _lastHistoryY: i
+  };
+}
+function P(t, i, e, h, c, s) {
+  const r = i - t.prevMouseX, n = e - t.prevMouseY;
+  if (t.cursorSpeed = Math.sqrt(r * r + n * n) / Math.max(c, 1e-3), (r !== 0 || n !== 0) && (t.lastMoveTime = h), t.prevMouseX = i, t.prevMouseY = e, s.spring) {
+    const o = (i - t.x) * s.stiffness, a = (e - t.y) * s.stiffness;
+    t.vx = (t.vx + o) * s.damping, t.vy = (t.vy + a) * s.damping, t.x += t.vx, t.y += t.vy;
+  } else if (s.follow > 0) {
+    const o = 1 - Math.pow(s.follow, 1 + c * 60);
+    t.x += (i - t.x) * o, t.y += (e - t.y) * o;
+  } else
+    t.x = i, t.y = e;
+  if (s.decay > 0) {
+    const o = (h - t.lastMoveTime) / 1e3;
+    o > 0 ? t.strengthMult = Math.max(0, 1 - o / s.decay) : t.strengthMult = 1;
+  } else
+    t.strengthMult = 1;
+  if (s.tailLength > 0) {
+    const o = t.x - t._lastHistoryX, a = t.y - t._lastHistoryY;
+    Math.sqrt(o * o + a * a) >= 4 && (t.history.unshift({ x: t.x, y: t.y }), t._lastHistoryX = t.x, t._lastHistoryY = t.y, t.history.length > s.tailLength && (t.history.length = s.tailLength));
+  } else
+    t.history.length = 0;
+}
+function G(t, i, e) {
+  const h = e > 0 ? 1 + Math.min(i.cursorSpeed / 300, 1) * e : 1;
+  return t * i.strengthMult * h;
+}
+const U = {
+  radius: 193,
+  strength: 72,
+  shape: "circle",
+  aspectRatio: 0.8,
+  cornerRadius: 0.3,
+  mode: "attract",
+  frequency: 3,
+  falloff: "smoothstep",
+  follow: 0.98,
+  spring: !0,
+  stiffness: 0.15,
+  damping: 0.75,
+  decay: 0.9,
+  velocityBoost: 0,
+  trigger: "always",
+  resolution: 0.15,
+  tail: 0.14,
+  tailLength: 68
+};
+let $ = 0;
+class O {
+  constructor(i, e = {}) {
+    this.mouseX = 0, this.mouseY = 0, this.isInside = !1, this.clickActive = !1, this.rafId = 0, this.lastTime = 0, this.render = (h) => {
+      const c = Math.min((h - this.lastTime) / 1e3, 0.1);
+      this.lastTime = h;
+      const s = this.opts;
+      let r = !0;
+      s.trigger === "hover" && (r = this.isInside), s.trigger === "click" && (r = this.clickActive), P(this.physics, this.mouseX, this.mouseY, h, c, {
+        follow: s.follow,
+        spring: s.spring,
+        stiffness: s.stiffness,
+        damping: s.damping,
+        decay: s.trigger === "click" ? s.decay > 0 ? s.decay : 1.5 : s.decay,
+        velocityBoost: s.velocityBoost,
+        tailLength: s.tail > 0 ? s.tailLength : 0
+      }), s.trigger === "click" && this.physics.strengthMult <= 0.01 && (this.clickActive = !1), this.updateMap(r), this.rafId = requestAnimationFrame(this.render);
+    }, this.el = i, this.opts = { ...U, ...e }, this.init();
+  }
+  // ─────────────────────────────────────────────
+  // Public API
+  // ─────────────────────────────────────────────
+  /** Update options live — takes effect on next frame. */
+  setOptions(i) {
+    this.opts = { ...this.opts, ...i }, this.feDisplace.setAttribute("scale", String(this.opts.strength));
+  }
+  /** Remove all DOM changes and stop the animation loop. */
+  destroy() {
+    cancelAnimationFrame(this.rafId), this.svgEl.remove(), this.el.style.filter = "", document.removeEventListener("mousemove", this.onMouseMove), this.el.removeEventListener("mouseenter", this.onMouseEnter), this.el.removeEventListener("mouseleave", this.onMouseLeave), this.el.removeEventListener("click", this.onMouseClick);
+  }
+  // ─────────────────────────────────────────────
+  // Init
+  // ─────────────────────────────────────────────
+  init() {
+    this.filterId = `liquid-distort-${++$}`, this.svgEl = document.createElementNS("http://www.w3.org/2000/svg", "svg"), this.svgEl.setAttribute("class", "liquid-distort-svg"), this.svgEl.style.cssText = "position:absolute;width:0;height:0;overflow:hidden;pointer-events:none;";
+    const i = document.createElementNS("http://www.w3.org/2000/svg", "defs"), e = document.createElementNS("http://www.w3.org/2000/svg", "filter");
+    e.setAttribute("id", this.filterId), e.setAttribute("x", "0%"), e.setAttribute("y", "0%"), e.setAttribute("width", "100%"), e.setAttribute("height", "100%"), e.setAttribute("color-interpolation-filters", "sRGB"), this.feImg = document.createElementNS("http://www.w3.org/2000/svg", "feImage"), this.feImg.setAttribute("result", "dmap"), this.feImg.setAttribute("preserveAspectRatio", "none"), this.feDisplace = document.createElementNS("http://www.w3.org/2000/svg", "feDisplacementMap"), this.feDisplace.setAttribute("in", "SourceGraphic"), this.feDisplace.setAttribute("in2", "dmap"), this.feDisplace.setAttribute("xChannelSelector", "R"), this.feDisplace.setAttribute("yChannelSelector", "G"), this.feDisplace.setAttribute("scale", String(this.opts.strength)), e.appendChild(this.feImg), e.appendChild(this.feDisplace), i.appendChild(e), this.svgEl.appendChild(i), document.body.appendChild(this.svgEl), this.el.style.filter = `url(#${this.filterId})`, this.mapCanvas = document.createElement("canvas");
+    const h = this.mapCanvas.getContext("2d");
+    if (!h) throw new Error("liquid-distort: Could not get 2d context");
+    this.ctx = h;
+    const c = this.el.getBoundingClientRect(), s = c.left + c.width / 2, r = c.top + c.height / 2;
+    this.mouseX = s, this.mouseY = r, this.physics = _(s, r), this.onMouseMove = (n) => {
+      this.mouseX = n.clientX, this.mouseY = n.clientY;
+    }, this.onMouseEnter = () => {
+      this.isInside = !0;
+    }, this.onMouseLeave = () => {
+      this.isInside = !1;
+    }, this.onMouseClick = (n) => {
+      this.mouseX = n.clientX, this.mouseY = n.clientY, this.clickActive = !0, this.physics.strengthMult = 1, this.physics.lastMoveTime = performance.now();
+    }, document.addEventListener("mousemove", this.onMouseMove), this.el.addEventListener("mouseenter", this.onMouseEnter), this.el.addEventListener("mouseleave", this.onMouseLeave), this.el.addEventListener("click", this.onMouseClick), this.lastTime = performance.now(), this.rafId = requestAnimationFrame(this.render);
+  }
+  updateMap(i) {
+    const e = this.opts, h = this.el.getBoundingClientRect(), c = h.width, s = h.height, r = e.resolution, n = Math.max(4, Math.round(c * r)), o = Math.max(4, Math.round(s * r));
+    (this.mapCanvas.width !== n || this.mapCanvas.height !== o) && (this.mapCanvas.width = n, this.mapCanvas.height = o);
+    const a = n * o, f = new Float32Array(a), g = new Float32Array(a);
+    if (i) {
+      const l = G(1, this.physics, e.velocityBoost), u = [];
+      if (l > 0.01 && u.push({ bx: this.physics.x, by: this.physics.y, s: l }), e.tail > 0 && this.physics.history.length > 0) {
+        const p = this.physics.history;
+        for (let d = 0; d < p.length; d++) {
+          const m = (1 - (d + 1) / p.length) * e.tail * l;
+          m > 5e-3 && u.push({ bx: p[d].x, by: p[d].y, s: m });
+        }
+      }
+      const w = e.radius / c * n * e.aspectRatio, b = e.radius / s * o, v = 1.6;
+      for (const { bx: p, by: d, s: C } of u) {
+        const m = (p - h.left) / c * n, A = (d - h.top) / s * o, k = Math.max(0, Math.floor(m - w * v)), q = Math.min(n - 1, Math.ceil(m + w * v)), T = Math.max(0, Math.floor(A - b * v)), B = Math.min(o - 1, Math.ceil(A + b * v));
+        for (let y = T; y <= B; y++)
+          for (let x = k; x <= q; x++) {
+            const L = (x - m) / w, S = (y - A) / b, E = Y(L, S, e.shape, e.aspectRatio, e.cornerRadius);
+            if (E > 1) continue;
+            const F = H(E, e.falloff) * C, [R, X] = N(L, S, E, F, e.mode, e.frequency), D = y * n + x;
+            f[D] += R, g[D] += X;
+          }
+      }
+    }
+    const I = this.ctx.createImageData(n, o), M = I.data;
+    for (let l = 0; l < a; l++) {
+      const u = l * 4;
+      M[u] = Math.max(0, Math.min(255, 128 + f[l] * 127)), M[u + 1] = Math.max(0, Math.min(255, 128 + g[l] * 127)), M[u + 2] = 128, M[u + 3] = 255;
+    }
+    this.ctx.putImageData(I, 0, 0), this.pushToFilter();
+  }
+  pushToFilter() {
+    const i = this.mapCanvas.toDataURL();
+    this.feImg.setAttribute("href", i), this.feImg.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", i);
+  }
+}
+export {
+  O as LiquidDistort
+};

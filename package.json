@@ -1,0 +1,48 @@
+{
+  "name": "liquid-distort",
+  "version": "0.1.0",
+  "description": "Cursor-driven liquid distortion effect for any DOM element. Zero dependencies, 9kb, works with any framework.",
+  "type": "module",
+  "main": "./dist/liquid-distort.cjs",
+  "module": "./dist/liquid-distort.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/liquid-distort.js",
+      "require": "./dist/liquid-distort.cjs",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": ["dist"],
+  "sideEffects": false,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && tsc --emitDeclarationOnly --outDir dist",
+    "preview": "vite preview",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "liquid",
+    "distort",
+    "displacement",
+    "svg",
+    "canvas",
+    "cursor",
+    "effect",
+    "animation",
+    "hover",
+    "interactive",
+    "filter",
+    "webgl-alternative",
+    "react",
+    "vue",
+    "svelte",
+    "vanilla"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "vite": "^5.3.1",
+    "vite-plugin-dts": "^3.9.1"
+  }
+}
