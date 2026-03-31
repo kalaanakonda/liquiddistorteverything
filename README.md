@@ -199,4 +199,4 @@ No WebGL. No DOM overlay. Just two browser APIs (Canvas 2D + SVG filters) doing 
 
 ## License
 
-MIT
+[MIT](LICENSE)
