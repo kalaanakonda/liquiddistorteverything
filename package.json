@@ -39,6 +39,14 @@
     "svelte",
     "vanilla"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kalaanakonda/liquiddistorteverything.git"
+  },
+  "homepage": "https://github.com/kalaanakonda/liquiddistorteverything#readme",
+  "bugs": {
+    "url": "https://github.com/kalaanakonda/liquiddistorteverything/issues"
+  },
   "license": "MIT",
   "devDependencies": {
     "typescript": "^5.4.5",
