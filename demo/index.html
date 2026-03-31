@@ -364,8 +364,22 @@
     </section>
   </main>
 
-<script type="module">
-  import { LiquidDistort } from '../src/index.ts'
+<script>
+  async function loadLiquidDistort() {
+    if (window.LiquidDistort) return
+    await new Promise((resolve, reject) => {
+      const s = document.createElement('script')
+      s.src = 'https://cdn.jsdelivr.net/npm/liquid-distort@0.1.0/dist/liquid-distort.umd.cjs'
+      s.onload = resolve
+      s.onerror = reject
+      document.head.appendChild(s)
+    })
+  }
+
+  async function main() {
+    await loadLiquidDistort()
+    const LiquidDistort = window.LiquidDistort?.LiquidDistort || window.LiquidDistort
+    if (!LiquidDistort) return
 
   const fxLayer = document.querySelector('.poster')
   const canvas = document.getElementById('dither-canvas')
@@ -443,6 +457,11 @@
   window.addEventListener('resize', resizeDither)
   resizeDither()
   window.addEventListener('beforeunload', () => fx.destroy())
+  }
+
+  main().catch(() => {
+    console.error('Failed to initialize liquid-distort from CDN.')
+  })
 </script>
 </body>
 </html>
