@@ -106,10 +106,11 @@ export class LiquidDistort {
     const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs')
     const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter')
     filter.setAttribute('id', this.filterId)
-    filter.setAttribute('x', '0%')
-    filter.setAttribute('y', '0%')
-    filter.setAttribute('width', '100%')
-    filter.setAttribute('height', '100%')
+    // Expand filter region to avoid edge clipping when displacement samples outside bounds.
+    filter.setAttribute('x', '-35%')
+    filter.setAttribute('y', '-35%')
+    filter.setAttribute('width', '170%')
+    filter.setAttribute('height', '170%')
     filter.setAttribute('color-interpolation-filters', 'sRGB')
 
     this.feImg = document.createElementNS('http://www.w3.org/2000/svg', 'feImage')

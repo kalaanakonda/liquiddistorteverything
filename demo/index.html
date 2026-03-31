@@ -3,226 +3,588 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>liquid-distort demo</title>
+<title>Liquid Distort - Frameworks in Motion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500;1,600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: #f5f2ed; font-family: sans-serif; cursor: crosshair; }
-
-  #stage {
-    width: 100%;
-    min-height: 100vh;
-    padding: 60px;
+  :root {
+    --bg: #020305;
+    --panel: #070b12;
+    --line: rgba(255, 255, 255, 0.16);
+    --text: #e7eaef;
+    --muted: #8e97a7;
+    --accent: #ff7b2f;
+    --accent-soft: rgba(255, 123, 47, 0.24);
+    --radius: 24px;
   }
 
-  h1 { font-size: 6rem; line-height: 1; margin-bottom: 20px; }
-  h2 { font-size: 3rem; line-height: 1; margin: 40px 0 20px; }
-  p  { font-size: 1.2rem; max-width: 600px; line-height: 1.6; margin: 20px 0; }
-
-  .box {
-    width: 260px; height: 160px;
-    background: #d8d4cc; border-radius: 16px;
-    display: inline-block; margin: 16px;
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
   }
 
-  /* ── Controls panel ── */
-  #controls {
+  html,
+  body {
+    min-height: 100%;
+    background: radial-gradient(circle at 22% 26%, rgba(31, 85, 206, 0.14), transparent 40%),
+      radial-gradient(circle at 74% 63%, rgba(255, 118, 51, 0.2), transparent 48%),
+      linear-gradient(180deg, #05070b 0%, #020305 35%, #04070c 100%);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
     position: fixed;
-    top: 16px; right: 16px;
-    bottom: 16px;
-    background: rgba(10,10,10,0.92);
-    color: #eee;
-    font-family: monospace;
-    font-size: 13px;
-    padding: 16px;
-    border-radius: 12px;
-    z-index: 9999;
-    width: 260px;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 36px 36px;
+    mask-image: radial-gradient(circle at 50% 35%, rgba(0, 0, 0, 1), transparent 80%);
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    width: min(1180px, 92vw);
+    margin: 0 auto;
+    padding: 32px 0 72px;
+  }
+
+  .topline,
+  .section-label,
+  .card-num,
+  .card-tag {
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    font-size: 0.7rem;
+    color: var(--accent);
+  }
+
+  .plus {
+    position: absolute;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 1.4rem;
+    line-height: 1;
+  }
+
+  .plus.one { top: 24px; left: 12px; }
+  .plus.two { top: 24px; right: 12px; }
+  .plus.three { top: 320px; left: 12px; }
+  .plus.four { top: 320px; right: 12px; }
+
+  header {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 24px 24px 32px;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(2px);
+    background: linear-gradient(170deg, rgba(7, 12, 20, 0.8), rgba(5, 8, 13, 0.7));
+  }
+
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 42px;
+  }
+
+  .brand {
+    font-size: 0.92rem;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .nav a {
+    color: var(--muted);
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: 160ms ease;
+  }
+
+  .nav a:hover {
+    color: var(--text);
+    border-color: var(--accent-soft);
+    background: rgba(255, 123, 47, 0.12);
+  }
+
+  .hero {
+    text-align: center;
+    position: relative;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    padding-top: 38px;
+  }
+
+  .hero .kicker {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(2.1rem, 7vw, 5.8rem);
+    line-height: 0.86;
+    color: #f4f6fb;
+  }
+
+  .hero .main {
+    font-size: clamp(2.3rem, 8.5vw, 7.5rem);
+    line-height: 0.93;
+    letter-spacing: -0.03em;
+    margin-top: 6px;
+    font-weight: 500;
+  }
+
+  .hero p {
+    max-width: 640px;
+    margin: 18px auto 0;
+    color: var(--muted);
+    line-height: 1.5;
+    font-size: 0.98rem;
+  }
+
+  .hero-cta {
+    margin-top: 24px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text);
+    text-decoration: none;
+    padding: 12px 18px;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    border-radius: 999px;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: 180ms ease;
+  }
+
+  .hero-cta:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 24px rgba(255, 123, 47, 0.2);
+  }
+
+  main {
+    margin-top: 40px;
+  }
+
+  .section-heading {
+    margin: 0 0 20px;
+    border-left: 2px solid var(--accent-soft);
+    padding-left: 14px;
+  }
+
+  .section-heading h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: clamp(1.7rem, 4vw, 3rem);
+    line-height: 1;
+    color: #f0f2f8;
+  }
+
+  .section-heading p {
+    margin-top: 8px;
+    color: var(--muted);
+    max-width: 700px;
+    font-size: 0.96rem;
+    line-height: 1.45;
+  }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr 1fr;
+    gap: 10px;
+  }
+
+  .card {
+    min-height: 180px;
+    border: 1px solid var(--line);
+    border-radius: 0;
+    padding: 18px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    overflow-y: auto;
+    justify-content: space-between;
+    background: linear-gradient(145deg, rgba(7, 9, 13, 0.95), rgba(4, 5, 9, 0.96));
+    position: relative;
+    overflow: hidden;
   }
 
-  #controls h3 { font-size: 14px; letter-spacing: 0.05em; color: #aaa; }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: -35%;
+    background: radial-gradient(circle at var(--mx, 45%) var(--my, 45%), rgba(255, 123, 47, 0.18), transparent 42%);
+    transition: 220ms ease;
+    pointer-events: none;
+  }
 
-  .row { display: flex; flex-direction: column; gap: 3px; }
-  .row label { color: #888; font-size: 11px; }
-  .row select,
-  .row input[type=range] { width: 100%; }
-  .row input[type=range] { accent-color: #7cf; }
-  .val { color: #7cf; float: right; }
+  .card.media {
+    background:
+      linear-gradient(140deg, rgba(255, 121, 50, 0.2), transparent 40%),
+      radial-gradient(circle at 65% 20%, rgba(62, 111, 220, 0.28), transparent 48%),
+      linear-gradient(180deg, rgba(4, 7, 12, 0.95), rgba(2, 3, 6, 0.98));
+  }
 
-  .row select {
-    background: #222; color: #eee; border: 1px solid #444;
-    border-radius: 4px; padding: 2px 4px;
+  .card.wide {
+    grid-column: span 2;
+  }
+
+  .card.tall {
+    min-height: 230px;
+  }
+
+  .card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .card h3 {
+    font-size: clamp(1.25rem, 2.2vw, 2rem);
+    line-height: 1.06;
+    max-width: 300px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    position: relative;
+    z-index: 1;
+  }
+
+  .card p {
+    margin-top: 14px;
+    font-size: 0.9rem;
+    max-width: 360px;
+    color: #b4bcc9;
+    line-height: 1.45;
+    position: relative;
+    z-index: 1;
+  }
+
+  .stats {
+    margin-top: 42px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 20px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    background: linear-gradient(170deg, rgba(8, 12, 20, 0.72), rgba(3, 6, 10, 0.6));
+  }
+
+  .stat {
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 12px;
+    min-height: 110px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .stat strong {
+    font-size: clamp(1.4rem, 3vw, 2.3rem);
+    line-height: 1;
+    letter-spacing: -0.03em;
+  }
+
+  .stat span {
+    color: var(--muted);
+    font-size: 0.85rem;
+  }
+
+  footer {
+    margin-top: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    color: var(--muted);
+    font-size: 0.82rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+    padding-top: 18px;
+  }
+
+  .links {
+    display: inline-flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .links a {
+    text-decoration: none;
+    color: #c9d1df;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 8px 12px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.72rem;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 460ms ease, transform 460ms ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (max-width: 980px) {
+    .feature-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .card.wide {
+      grid-column: span 2;
+    }
+
+    .stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 680px) {
+    .page {
+      width: min(94vw, 680px);
+      padding-top: 20px;
+    }
+
+    header {
+      padding: 18px 14px 24px;
+      border-radius: 16px;
+    }
+
+    .plus {
+      display: none;
+    }
+
+    .nav {
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .hero {
+      padding-top: 22px;
+    }
+
+    .feature-grid,
+    .stats {
+      grid-template-columns: 1fr;
+    }
+
+    .card.wide {
+      grid-column: span 1;
+    }
+
+    footer {
+      flex-direction: column;
+      align-items: flex-start;
+    }
   }
 </style>
 </head>
 <body>
+  <span class="plus one">+</span>
+  <span class="plus two">+</span>
+  <span class="plus three">+</span>
+  <span class="plus four">+</span>
 
-<div id="stage">
-  <h1>liquid-distort</h1>
-  <p>Move your cursor over the page. Adjust options in the panel →</p>
-  <div class="box"></div>
-  <div class="box"></div>
-  <div class="box"></div>
-  <h2>Typography test</h2>
-  <p>The effect tracks the cursor and distorts everything behind it — text, shapes, images. All configurable.</p>
-  <div class="box"></div>
-  <div class="box"></div>
-  <div class="box"></div>
-  <h2>Bottom section</h2>
-  <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Scroll down and the effect still tracks correctly anywhere on the page.</p>
-  <div class="box"></div>
-  <div class="box"></div>
-</div>
+  <div class="page">
+    <header id="hero-target" class="distort-target reveal">
+      <div class="nav">
+        <span class="topline">Liquid Distort / v0.1</span>
+        <span class="brand">Cursor Physics for the Web</span>
+        <a href="https://www.npmjs.com/package/liquid-distort" target="_blank" rel="noreferrer">NPM Package</a>
+      </div>
 
-<div id="controls">
-  <h3>liquid-distort options</h3>
+      <section class="hero">
+        <h1>
+          <span class="kicker">Proven</span>
+          <span class="main">Distortion Frameworks</span>
+        </h1>
+        <p>
+          `liquid-distort` turns static interfaces into responsive surfaces. Paints motion with SVG displacement,
+          tracks cursor velocity, and ships as a tiny dependency-free package for React, Vue, Svelte, and vanilla sites.
+        </p>
+        <a class="hero-cta" href="https://github.com/kalaanakonda/liquiddistorteverything" target="_blank" rel="noreferrer">
+          Explore Source <span aria-hidden="true">&#8599;</span>
+        </a>
+      </section>
+    </header>
 
-  <div class="row">
-    <label>shape</label>
-    <select id="c-shape">
-      <option value="circle" selected>circle</option>
-      <option value="ellipse">ellipse</option>
-      <option value="rect">rect</option>
-      <option value="roundedRect">roundedRect</option>
-    </select>
+    <main>
+      <section class="section-heading reveal">
+        <span class="section-label">The Interaction Method</span>
+        <h2>Distortion, engineered in practice</h2>
+        <p>
+          This library is not a gimmick animation. It is a reusable motion system with configurable modes, falloff math,
+          and physics tuning so teams can build intentional interaction, not random wobble.
+        </p>
+      </section>
+
+      <section id="grid-target" class="feature-grid">
+        <article class="card media tall reveal">
+          <div class="card-head">
+            <span class="card-num">01</span>
+            <span class="card-tag">Mode</span>
+          </div>
+          <div>
+            <h3>Engineer liquid motion systems</h3>
+            <p>Use `attract`, `swirl`, `ripple`, and `wave` to match your brand's interaction voice.</p>
+          </div>
+        </article>
+
+        <article class="card wide reveal">
+          <div class="card-head">
+            <span class="card-num">02</span>
+            <span class="card-tag">Runtime</span>
+          </div>
+          <div>
+            <h3>Professionalize effects without WebGL</h3>
+            <p>Runs on Canvas 2D + SVG filters, keeping setup clean while preserving punchy visual depth.</p>
+          </div>
+        </article>
+
+        <article class="card reveal">
+          <div class="card-head">
+            <span class="card-num">03</span>
+            <span class="card-tag">Control</span>
+          </div>
+          <div>
+            <h3>Decision-led parameter tuning</h3>
+            <p>Adjust radius, strength, falloff, follow lag, spring, and decay in real time.</p>
+          </div>
+        </article>
+
+        <article class="card reveal">
+          <div class="card-head">
+            <span class="card-num">04</span>
+            <span class="card-tag">Shipping</span>
+          </div>
+          <div>
+            <h3>Framework-ready by default</h3>
+            <p>Drop into React, Vue, Svelte, Astro, or plain HTML with the same API surface.</p>
+          </div>
+        </article>
+
+        <article class="card media reveal">
+          <div class="card-head">
+            <span class="card-num">05</span>
+            <span class="card-tag">Performance</span>
+          </div>
+          <div>
+            <h3>Measurable visual impact</h3>
+            <p>Lightweight build, zero runtime dependencies, and graceful cleanup with `destroy()`.</p>
+          </div>
+        </article>
+      </section>
+
+      <section class="stats reveal">
+        <div class="stat">
+          <span>Bundle profile</span>
+          <strong>~9kb</strong>
+        </div>
+        <div class="stat">
+          <span>Dependencies</span>
+          <strong>0</strong>
+        </div>
+        <div class="stat">
+          <span>Core modes</span>
+          <strong>5</strong>
+        </div>
+        <div class="stat">
+          <span>Setup time</span>
+          <strong>&lt;2 min</strong>
+        </div>
+      </section>
+    </main>
+
+    <footer class="reveal">
+      <span>Built for teams that want interaction systems, not one-off effects.</span>
+      <span class="links">
+        <a href="https://www.npmjs.com/package/liquid-distort" target="_blank" rel="noreferrer">npm</a>
+        <a href="https://github.com/kalaanakonda/liquiddistorteverything" target="_blank" rel="noreferrer">github</a>
+      </span>
+    </footer>
   </div>
-
-  <div class="row">
-    <label>mode</label>
-    <select id="c-mode">
-      <option value="refract">refract</option>
-      <option value="attract" selected>attract</option>
-      <option value="swirl">swirl</option>
-      <option value="ripple">ripple</option>
-      <option value="wave">wave</option>
-    </select>
-  </div>
-
-  <div class="row">
-    <label>falloff</label>
-    <select id="c-falloff">
-      <option value="smoothstep" selected>smoothstep</option>
-      <option value="linear">linear</option>
-      <option value="exponential">exponential</option>
-      <option value="cosine">cosine</option>
-    </select>
-  </div>
-
-  <div class="row">
-    <label>trigger</label>
-    <select id="c-trigger">
-      <option value="always" selected>always</option>
-      <option value="hover">hover (over stage)</option>
-      <option value="click">click</option>
-    </select>
-  </div>
-
-  <div class="row">
-    <label>radius <span class="val" id="v-radius">193</span></label>
-    <input type="range" id="c-radius" min="20" max="300" value="193">
-  </div>
-
-  <div class="row">
-    <label>strength <span class="val" id="v-strength">72</span></label>
-    <input type="range" id="c-strength" min="0" max="200" value="72">
-  </div>
-
-  <div class="row">
-    <label>aspectRatio <span class="val" id="v-aspect">0.8</span></label>
-    <input type="range" id="c-aspect" min="0.2" max="4" step="0.1" value="0.8">
-  </div>
-
-  <div class="row">
-    <label>frequency <span class="val" id="v-freq">3</span></label>
-    <input type="range" id="c-freq" min="1" max="10" step="0.5" value="3">
-  </div>
-
-  <div class="row">
-    <label>follow lag <span class="val" id="v-follow">0.98</span></label>
-    <input type="range" id="c-follow" min="0" max="0.98" step="0.01" value="0.98">
-  </div>
-
-  <div class="row">
-    <label>decay (seconds) <span class="val" id="v-decay">0.9</span></label>
-    <input type="range" id="c-decay" min="0" max="5" step="0.1" value="0.9">
-  </div>
-
-  <div class="row">
-    <label>velocityBoost <span class="val" id="v-vboost">0.0</span></label>
-    <input type="range" id="c-vboost" min="0" max="3" step="0.1" value="0">
-  </div>
-
-  <div class="row">
-    <label>spring</label>
-    <select id="c-spring">
-      <option value="false">off</option>
-      <option value="true" selected>on</option>
-    </select>
-  </div>
-
-  <div class="row" style="border-top:1px solid #333;padding-top:10px;margin-top:4px;">
-    <label>tail strength <span class="val" id="v-tail">0.14</span></label>
-    <input type="range" id="c-tail" min="0" max="1" step="0.01" value="0.14">
-  </div>
-
-  <div class="row">
-    <label>tail length <span class="val" id="v-taillength">68</span></label>
-    <input type="range" id="c-taillength" min="4" max="80" step="1" value="68">
-  </div>
-</div>
 
 <script type="module">
   import { LiquidDistort } from '../src/index.ts'
 
-  const stage = document.getElementById('stage')
-  let effect = new LiquidDistort(stage, {
-    mode: 'attract',
-    radius: 193,
-    strength: 72,
-    aspectRatio: 0.8,
-    follow: 0.98,
+  const hero = document.getElementById('hero-target')
+  const cards = Array.from(document.querySelectorAll('.card'))
+
+  const heroFx = new LiquidDistort(hero, {
+    mode: 'swirl',
+    shape: 'ellipse',
+    trigger: 'always',
+    radius: 210,
+    strength: 98,
+    aspectRatio: 1.35,
+    follow: 0.92,
+    falloff: 'cosine',
     spring: true,
-    decay: 0.9,
-    tail: 0.14,
-    tailLength: 68,
+    decay: 1.05,
+    tail: 0.12,
+    tailLength: 54,
   })
 
-  function get(id) { return document.getElementById(id) }
-  function setVal(id, v) { get('v-' + id).textContent = v }
+  const cardFx = cards.map((card) => new LiquidDistort(card, {
+    mode: 'attract',
+    shape: 'ellipse',
+    trigger: 'hover',
+    radius: 108,
+    strength: 42,
+    aspectRatio: 1.2,
+    follow: 0.94,
+    falloff: 'cosine',
+    spring: true,
+    decay: 0.75,
+    tail: 0.04,
+    tailLength: 20,
+    resolution: 0.3,
+  }))
 
-  function update() {
-    effect.setOptions({
-      shape:        get('c-shape').value,
-      mode:         get('c-mode').value,
-      falloff:      get('c-falloff').value,
-      trigger:      get('c-trigger').value,
-      radius:       +get('c-radius').value,
-      strength:     +get('c-strength').value,
-      aspectRatio:  +get('c-aspect').value,
-      frequency:    +get('c-freq').value,
-      follow:       +get('c-follow').value,
-      decay:        +get('c-decay').value,
-      velocityBoost:+get('c-vboost').value,
-      spring:       get('c-spring').value === 'true',
-      tail:         +get('c-tail').value,
-      tailLength:   +get('c-taillength').value,
+  const revealObserver = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible')
+      }
+    }
+  }, { threshold: 0.15 })
+
+  document.querySelectorAll('.reveal').forEach((el, idx) => {
+    el.style.transitionDelay = `${idx * 70}ms`
+    revealObserver.observe(el)
+  })
+
+  cards.forEach((card) => {
+    card.addEventListener('pointermove', (event) => {
+      const rect = card.getBoundingClientRect()
+      const x = ((event.clientX - rect.left) / rect.width) * 100
+      const y = ((event.clientY - rect.top) / rect.height) * 100
+      card.style.setProperty('--mx', `${x.toFixed(1)}%`)
+      card.style.setProperty('--my', `${y.toFixed(1)}%`)
     })
-    setVal('radius',     get('c-radius').value)
-    setVal('strength',   get('c-strength').value)
-    setVal('aspect',     (+get('c-aspect').value).toFixed(1))
-    setVal('freq',       get('c-freq').value)
-    setVal('follow',     (+get('c-follow').value).toFixed(2))
-    setVal('decay',      get('c-decay').value)
-    setVal('vboost',     (+get('c-vboost').value).toFixed(1))
-    setVal('tail',       (+get('c-tail').value).toFixed(2))
-    setVal('taillength', get('c-taillength').value)
-  }
+  })
 
-  document.querySelectorAll('#controls select, #controls input').forEach(el => {
-    el.addEventListener('input', update)
+  window.addEventListener('beforeunload', () => {
+    heroFx.destroy()
+    cardFx.forEach((fx) => fx.destroy())
   })
 </script>
 </body>
