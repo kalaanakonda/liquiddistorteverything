@@ -3,589 +3,446 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Liquid Distort - Frameworks in Motion</title>
+<title>liquid-distort / package landing</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,500;1,600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #020305;
-    --panel: #070b12;
-    --line: rgba(255, 255, 255, 0.16);
-    --text: #e7eaef;
-    --muted: #8e97a7;
-    --accent: #ff7b2f;
-    --accent-soft: rgba(255, 123, 47, 0.24);
-    --radius: 24px;
+    --bg: #e3e3e3;
+    --ink: #0d0d0d;
+    --muted: #2f2f2f;
+    --line: #9a9a9a;
+    --soft: rgba(255, 255, 255, 0.38);
   }
 
   * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
   }
 
-  html,
   body {
-    min-height: 100%;
-    background: radial-gradient(circle at 22% 26%, rgba(31, 85, 206, 0.14), transparent 40%),
-      radial-gradient(circle at 74% 63%, rgba(255, 118, 51, 0.2), transparent 48%),
-      linear-gradient(180deg, #05070b 0%, #020305 35%, #04070c 100%);
-    color: var(--text);
-    font-family: 'Space Grotesk', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: Inter, sans-serif;
+    min-height: 100vh;
     overflow-x: hidden;
   }
 
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background-image:
-      linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-    background-size: 36px 36px;
-    mask-image: radial-gradient(circle at 50% 35%, rgba(0, 0, 0, 1), transparent 80%);
-    z-index: 0;
-  }
-
-  .page {
+  .poster {
     position: relative;
-    z-index: 1;
-    width: min(1180px, 92vw);
-    margin: 0 auto;
-    padding: 32px 0 72px;
+    min-height: 100vh;
+    padding: 22px 22px 40px;
   }
 
-  .topline,
-  .section-label,
-  .card-num,
-  .card-tag {
-    text-transform: uppercase;
-    letter-spacing: 0.16em;
-    font-size: 0.7rem;
-    color: var(--accent);
-  }
-
-  .plus {
-    position: absolute;
-    color: rgba(255, 255, 255, 0.5);
-    font-size: 1.4rem;
-    line-height: 1;
-  }
-
-  .plus.one { top: 24px; left: 12px; }
-  .plus.two { top: 24px; right: 12px; }
-  .plus.three { top: 320px; left: 12px; }
-  .plus.four { top: 320px; right: 12px; }
-
-  header {
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 24px 24px 32px;
-    position: relative;
-    overflow: hidden;
-    backdrop-filter: blur(2px);
-    background: linear-gradient(170deg, rgba(7, 12, 20, 0.8), rgba(5, 8, 13, 0.7));
-  }
-
-  .nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 42px;
-  }
-
-  .brand {
-    font-size: 0.92rem;
-    letter-spacing: 0.12em;
+  .mono {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    line-height: 1.35;
     color: var(--muted);
-    text-transform: uppercase;
   }
 
-  .nav a {
-    color: var(--muted);
-    text-decoration: none;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 999px;
-    padding: 8px 14px;
-    font-size: 0.78rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    transition: 160ms ease;
+  .top {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: start;
   }
 
-  .nav a:hover {
-    color: var(--text);
-    border-color: var(--accent-soft);
-    background: rgba(255, 123, 47, 0.12);
+  .serial {
+    margin-bottom: 10px;
   }
 
-  .hero {
-    text-align: center;
-    position: relative;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    padding-top: 38px;
-  }
-
-  .hero .kicker {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: clamp(2.1rem, 7vw, 5.8rem);
-    line-height: 0.86;
-    color: #f4f6fb;
-  }
-
-  .hero .main {
-    font-size: clamp(2.3rem, 8.5vw, 7.5rem);
-    line-height: 0.93;
-    letter-spacing: -0.03em;
-    margin-top: 6px;
-    font-weight: 500;
-  }
-
-  .hero p {
-    max-width: 640px;
-    margin: 18px auto 0;
-    color: var(--muted);
-    line-height: 1.5;
-    font-size: 0.98rem;
-  }
-
-  .hero-cta {
+  .title {
     margin-top: 24px;
+    font-size: clamp(72px, 12vw, 170px);
+    line-height: 0.82;
+    letter-spacing: -0.07em;
+    text-transform: uppercase;
+  }
+
+  .title span {
+    display: block;
+  }
+
+  .badge {
+    margin-top: 10px;
+    display: inline-block;
+    border: 1px solid #707070;
+    padding: 4px 6px;
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    background: var(--soft);
+  }
+
+  .barcode {
+    margin-top: 56px;
+    width: 132px;
+    height: 32px;
+    border: 1px solid #6b6b6b;
+    background: repeating-linear-gradient(
+      90deg,
+      #121212 0,
+      #121212 2px,
+      transparent 2px,
+      transparent 4px,
+      #121212 4px,
+      #121212 5px,
+      transparent 5px,
+      transparent 8px
+    );
+  }
+
+  .hero-grid {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: 170px 1fr 1fr;
+    gap: 18px;
+    align-items: start;
+  }
+
+  .hero-number {
+    font-size: 58px;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+  }
+
+  .summary {
+    font-size: 18px;
+    line-height: 1.45;
+    max-width: 680px;
+  }
+
+  .layer {
+    position: relative;
+    margin-top: 26px;
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    min-height: 270px;
+    overflow: hidden;
+  }
+
+  .dither {
+    position: absolute;
+    inset: 0;
+    opacity: 0.7;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+  }
+
+  .dither canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .layer-copy {
+    position: relative;
+    z-index: 2;
+    padding: 20px 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .panel {
+    border-top: 1px solid #8b8b8b;
+    padding-top: 8px;
+  }
+
+  .copy-box {
+    margin-top: 10px;
     display: inline-flex;
     align-items: center;
-    gap: 12px;
-    color: var(--text);
-    text-decoration: none;
-    padding: 12px 18px;
-    border: 1px solid rgba(255, 255, 255, 0.24);
-    border-radius: 999px;
-    font-size: 0.8rem;
-    letter-spacing: 0.08em;
+    gap: 8px;
+    border: 1px solid #727272;
+    padding: 8px 10px;
+    background: var(--soft);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+  }
+
+  .copy-box button {
+    border: 1px solid #4d4d4d;
+    background: #111;
+    color: #f0f0f0;
+    padding: 5px 8px;
+    font-size: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    cursor: pointer;
+  }
+
+  .blocks {
+    margin-top: 18px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .block {
+    border-top: 1px solid #888;
+    padding-top: 8px;
+  }
+
+  .block h3 {
+    font-size: 12px;
     text-transform: uppercase;
-    transition: 180ms ease;
+    letter-spacing: 0.08em;
+    margin-bottom: 8px;
   }
 
-  .hero-cta:hover {
-    border-color: var(--accent);
-    box-shadow: 0 0 24px rgba(255, 123, 47, 0.2);
-  }
-
-  main {
-    margin-top: 40px;
-  }
-
-  .section-heading {
-    margin: 0 0 20px;
-    border-left: 2px solid var(--accent-soft);
-    padding-left: 14px;
-  }
-
-  .section-heading h2 {
-    font-family: 'Cormorant Garamond', serif;
-    font-style: italic;
-    font-size: clamp(1.7rem, 4vw, 3rem);
-    line-height: 1;
-    color: #f0f2f8;
-  }
-
-  .section-heading p {
-    margin-top: 8px;
-    color: var(--muted);
-    max-width: 700px;
-    font-size: 0.96rem;
-    line-height: 1.45;
-  }
-
-  .feature-grid {
+  .list {
     display: grid;
-    grid-template-columns: 1.15fr 1fr 1fr;
-    gap: 10px;
-  }
-
-  .card {
-    min-height: 180px;
-    border: 1px solid var(--line);
-    border-radius: 0;
-    padding: 18px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    background: linear-gradient(145deg, rgba(7, 9, 13, 0.95), rgba(4, 5, 9, 0.96));
-    position: relative;
-    overflow: hidden;
-  }
-
-  .card::before {
-    content: '';
-    position: absolute;
-    inset: -35%;
-    background: radial-gradient(circle at var(--mx, 45%) var(--my, 45%), rgba(255, 123, 47, 0.18), transparent 42%);
-    transition: 220ms ease;
-    pointer-events: none;
-  }
-
-  .card.media {
-    background:
-      linear-gradient(140deg, rgba(255, 121, 50, 0.2), transparent 40%),
-      radial-gradient(circle at 65% 20%, rgba(62, 111, 220, 0.28), transparent 48%),
-      linear-gradient(180deg, rgba(4, 7, 12, 0.95), rgba(2, 3, 6, 0.98));
-  }
-
-  .card.wide {
-    grid-column: span 2;
-  }
-
-  .card.tall {
-    min-height: 230px;
-  }
-
-  .card-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    z-index: 1;
-  }
-
-  .card h3 {
-    font-size: clamp(1.25rem, 2.2vw, 2rem);
-    line-height: 1.06;
-    max-width: 300px;
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    position: relative;
-    z-index: 1;
-  }
-
-  .card p {
-    margin-top: 14px;
-    font-size: 0.9rem;
-    max-width: 360px;
-    color: #b4bcc9;
-    line-height: 1.45;
-    position: relative;
-    z-index: 1;
-  }
-
-  .stats {
-    margin-top: 42px;
-    border: 1px solid var(--line);
-    border-radius: var(--radius);
-    padding: 20px;
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 10px;
-    background: linear-gradient(170deg, rgba(8, 12, 20, 0.72), rgba(3, 6, 10, 0.6));
-  }
-
-  .stat {
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    padding: 12px;
-    min-height: 110px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 10px;
-  }
-
-  .stat strong {
-    font-size: clamp(1.4rem, 3vw, 2.3rem);
-    line-height: 1;
-    letter-spacing: -0.03em;
-  }
-
-  .stat span {
-    color: var(--muted);
-    font-size: 0.85rem;
-  }
-
-  footer {
-    margin-top: 26px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 14px;
-    color: var(--muted);
-    font-size: 0.82rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.14);
-    padding-top: 18px;
+    gap: 4px;
   }
 
   .links {
-    display: inline-flex;
-    gap: 10px;
+    margin-top: 18px;
+    display: flex;
     flex-wrap: wrap;
+    gap: 8px;
   }
 
   .links a {
     text-decoration: none;
-    color: #c9d1df;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 8px 12px;
-    border-radius: 999px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-size: 0.72rem;
+    border: 1px solid #707070;
+    color: #101010;
+    background: var(--soft);
+    padding: 6px 8px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
   }
 
-  .reveal {
-    opacity: 0;
-    transform: translateY(18px);
-    transition: opacity 460ms ease, transform 460ms ease;
+  .options {
+    margin-top: 18px;
+    border-top: 2px solid #787878;
+    padding-top: 10px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
   }
 
-  .reveal.visible {
-    opacity: 1;
-    transform: translateY(0);
+  .foot {
+    margin-top: 16px;
+    border-top: 1px solid #8f8f8f;
+    padding-top: 8px;
   }
 
-  @media (max-width: 980px) {
-    .feature-grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-
-    .card.wide {
-      grid-column: span 2;
-    }
-
-    .stats {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  @media (max-width: 680px) {
-    .page {
-      width: min(94vw, 680px);
-      padding-top: 20px;
-    }
-
-    header {
-      padding: 18px 14px 24px;
-      border-radius: 16px;
-    }
-
-    .plus {
-      display: none;
-    }
-
-    .nav {
-      margin-bottom: 24px;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .hero {
-      padding-top: 22px;
-    }
-
-    .feature-grid,
-    .stats {
+  @media (max-width: 1000px) {
+    .hero-grid,
+    .layer-copy,
+    .blocks,
+    .options {
       grid-template-columns: 1fr;
+      gap: 12px;
     }
 
-    .card.wide {
-      grid-column: span 1;
+    .title {
+      font-size: clamp(58px, 14vw, 100px);
     }
 
-    footer {
-      flex-direction: column;
-      align-items: flex-start;
+    .hero-number {
+      font-size: 42px;
+    }
+
+    .summary {
+      font-size: 16px;
+    }
+
+    .layer {
+      min-height: 220px;
     }
   }
 </style>
 </head>
 <body>
-  <span class="plus one">+</span>
-  <span class="plus two">+</span>
-  <span class="plus three">+</span>
-  <span class="plus four">+</span>
-
-  <div class="page">
-    <header id="hero-target" class="distort-target reveal">
-      <div class="nav">
-        <span class="topline">Liquid Distort / v0.1</span>
-        <span class="brand">Cursor Physics for the Web</span>
-        <a href="https://www.npmjs.com/package/liquid-distort" target="_blank" rel="noreferrer">NPM Package</a>
+  <main class="poster">
+    <section class="top">
+      <div>
+        <p class="mono serial">MAR 2026 / NPM PACKAGE SHEET / LIQUID-DISTORT</p>
+        <h1 class="title"><span>liquid</span><span>distort</span></h1>
+        <span class="badge">name: liquid-distort / version: 0.1.0 / license: MIT</span>
       </div>
+      <div>
+        <p class="mono" style="text-align:right">repository: github.com/kalaanakonda/liquiddistorteverything</p>
+        <div class="barcode"></div>
+      </div>
+    </section>
 
-      <section class="hero">
-        <h1>
-          <span class="kicker">Proven</span>
-          <span class="main">Distortion Frameworks</span>
-        </h1>
-        <p>
-          `liquid-distort` turns static interfaces into responsive surfaces. Paints motion with SVG displacement,
-          tracks cursor velocity, and ships as a tiny dependency-free package for React, Vue, Svelte, and vanilla sites.
-        </p>
-        <a class="hero-cta" href="https://github.com/kalaanakonda/liquiddistorteverything" target="_blank" rel="noreferrer">
-          Explore Source <span aria-hidden="true">&#8599;</span>
-        </a>
-      </section>
-    </header>
+    <section class="hero-grid">
+      <div>
+        <p class="hero-number">1/3</p>
+        <p class="mono">zero dependencies<br>works with any framework<br>~9kb gzipped</p>
+      </div>
+      <div>
+        <p class="summary">Cursor-driven liquid distortion effect for any DOM element. Warps text, images, and UI using SVG displacement maps. No WebGL, no canvas overlay, no dependencies.</p>
+      </div>
+      <div>
+        <p class="mono">main: ./dist/liquid-distort.cjs<br>module: ./dist/liquid-distort.js<br>types: ./dist/index.d.ts<br>exports: import/require/types</p>
+      </div>
+    </section>
 
-    <main>
-      <section class="section-heading reveal">
-        <span class="section-label">The Interaction Method</span>
-        <h2>Distortion, engineered in practice</h2>
-        <p>
-          This library is not a gimmick animation. It is a reusable motion system with configurable modes, falloff math,
-          and physics tuning so teams can build intentional interaction, not random wobble.
-        </p>
-      </section>
-
-      <section id="grid-target" class="feature-grid">
-        <article class="card media tall reveal">
-          <div class="card-head">
-            <span class="card-num">01</span>
-            <span class="card-tag">Mode</span>
+    <section id="fx-layer" class="layer">
+      <div class="dither" aria-hidden="true">
+        <canvas id="dither-canvas" width="1400" height="340"></canvas>
+      </div>
+      <div class="layer-copy">
+        <div class="panel">
+          <p class="mono">Install</p>
+          <div class="copy-box">
+            <code id="install-cmd">npm install liquid-distort</code>
+            <button id="copy-btn" type="button">COPY</button>
           </div>
-          <div>
-            <h3>Engineer liquid motion systems</h3>
-            <p>Use `attract`, `swirl`, `ripple`, and `wave` to match your brand's interaction voice.</p>
-          </div>
-        </article>
-
-        <article class="card wide reveal">
-          <div class="card-head">
-            <span class="card-num">02</span>
-            <span class="card-tag">Runtime</span>
-          </div>
-          <div>
-            <h3>Professionalize effects without WebGL</h3>
-            <p>Runs on Canvas 2D + SVG filters, keeping setup clean while preserving punchy visual depth.</p>
-          </div>
-        </article>
-
-        <article class="card reveal">
-          <div class="card-head">
-            <span class="card-num">03</span>
-            <span class="card-tag">Control</span>
-          </div>
-          <div>
-            <h3>Decision-led parameter tuning</h3>
-            <p>Adjust radius, strength, falloff, follow lag, spring, and decay in real time.</p>
-          </div>
-        </article>
-
-        <article class="card reveal">
-          <div class="card-head">
-            <span class="card-num">04</span>
-            <span class="card-tag">Shipping</span>
-          </div>
-          <div>
-            <h3>Framework-ready by default</h3>
-            <p>Drop into React, Vue, Svelte, Astro, or plain HTML with the same API surface.</p>
-          </div>
-        </article>
-
-        <article class="card media reveal">
-          <div class="card-head">
-            <span class="card-num">05</span>
-            <span class="card-tag">Performance</span>
-          </div>
-          <div>
-            <h3>Measurable visual impact</h3>
-            <p>Lightweight build, zero runtime dependencies, and graceful cleanup with `destroy()`.</p>
-          </div>
-        </article>
-      </section>
-
-      <section class="stats reveal">
-        <div class="stat">
-          <span>Bundle profile</span>
-          <strong>~9kb</strong>
+          <p class="mono" style="margin-top:8px">CDN: https://cdn.jsdelivr.net/npm/liquid-distort/dist/liquid-distort.umd.cjs</p>
         </div>
-        <div class="stat">
-          <span>Dependencies</span>
-          <strong>0</strong>
+        <div class="panel">
+          <p class="mono">Quick Start</p>
+          <p class="mono" style="margin-top:6px">import { LiquidDistort } from 'liquid-distort'<br><br>new LiquidDistort(document.getElementById('hero'))</p>
         </div>
-        <div class="stat">
-          <span>Core modes</span>
-          <strong>5</strong>
-        </div>
-        <div class="stat">
-          <span>Setup time</span>
-          <strong>&lt;2 min</strong>
-        </div>
-      </section>
-    </main>
+      </div>
+    </section>
 
-    <footer class="reveal">
-      <span>Built for teams that want interaction systems, not one-off effects.</span>
-      <span class="links">
-        <a href="https://www.npmjs.com/package/liquid-distort" target="_blank" rel="noreferrer">npm</a>
-        <a href="https://github.com/kalaanakonda/liquiddistorteverything" target="_blank" rel="noreferrer">github</a>
-      </span>
-    </footer>
-  </div>
+    <section class="blocks mono">
+      <article class="block">
+        <h3>Framework Support</h3>
+        <div class="list">
+          <p>React: useEffect + destroy cleanup</p>
+          <p>Vue: onMounted / onUnmounted</p>
+          <p>Svelte: action with destroy()</p>
+          <p>Plain HTML: UMD CDN script</p>
+        </div>
+      </article>
+      <article class="block">
+        <h3>Core API</h3>
+        <div class="list">
+          <p>new LiquidDistort(element, options)</p>
+          <p>effect.setOptions({ ... })</p>
+          <p>effect.destroy()</p>
+          <p>Target a container to exclude outside elements</p>
+        </div>
+      </article>
+      <article class="block">
+        <h3>How It Works</h3>
+        <div class="list">
+          <p>Renders a small off-screen canvas displacement map each frame.</p>
+          <p>Pixel channels encode X/Y distortion direction + magnitude.</p>
+          <p>Map is fed to SVG feDisplacementMap on the target element.</p>
+          <p>Canvas 2D + SVG filter pipeline, no WebGL.</p>
+        </div>
+      </article>
+    </section>
+
+    <section class="options mono">
+      <div class="block">
+        <h3>Modes</h3>
+        <p>refract, attract, swirl, ripple, wave</p>
+      </div>
+      <div class="block">
+        <h3>Shapes</h3>
+        <p>circle, ellipse, rect, roundedRect</p>
+      </div>
+      <div class="block">
+        <h3>Triggers</h3>
+        <p>always, hover, click</p>
+      </div>
+      <div class="block">
+        <h3>Key Options</h3>
+        <p>radius, strength, falloff, follow, spring, decay, tail, resolution</p>
+      </div>
+    </section>
+
+    <div class="links">
+      <a href="https://www.npmjs.com/package/liquid-distort" target="_blank" rel="noreferrer">NPM PACKAGE</a>
+      <a href="https://github.com/kalaanakonda/liquiddistorteverything" target="_blank" rel="noreferrer">GITHUB REPO</a>
+      <a href="https://github.com/kalaanakonda/liquiddistorteverything#readme" target="_blank" rel="noreferrer">README</a>
+      <a href="https://github.com/kalaanakonda/liquiddistorteverything/issues" target="_blank" rel="noreferrer">ISSUES</a>
+    </div>
+
+    <section class="foot mono">
+      <p>keywords: liquid, distort, displacement, svg, canvas, cursor, effect, animation, hover, interactive, filter, webgl-alternative, react, vue, svelte, vanilla</p>
+    </section>
+  </main>
 
 <script type="module">
   import { LiquidDistort } from '../src/index.ts'
 
-  const hero = document.getElementById('hero-target')
-  const cards = Array.from(document.querySelectorAll('.card'))
+  const fxLayer = document.querySelector('.poster')
+  const canvas = document.getElementById('dither-canvas')
+  const ctx = canvas.getContext('2d')
+  const copyBtn = document.getElementById('copy-btn')
+  const cmd = document.getElementById('install-cmd').textContent
 
-  const heroFx = new LiquidDistort(hero, {
+  function drawDither() {
+    const w = canvas.width
+    const h = canvas.height
+    ctx.clearRect(0, 0, w, h)
+    ctx.fillStyle = '#111'
+
+    const cx = w * 0.5
+    const cy = h * 0.5
+    const rx = w * 0.47
+    const ry = h * 0.42
+
+    for (let y = 4; y < h - 4; y += 6) {
+      for (let x = 4; x < w - 4; x += 6) {
+        const nx = (x - cx) / rx
+        const ny = (y - cy) / ry
+        const dist = Math.sqrt(nx * nx + ny * ny)
+        if (dist > 1.05) continue
+
+        const wave = Math.sin(nx * 8.8) * Math.cos(ny * 7.4)
+        const density = (1 - dist) * 0.86 + wave * 0.15
+        if (Math.random() < density) {
+          ctx.globalAlpha = 0.15 + (1 - dist) * 0.48
+          ctx.fillRect(x, y, 1.2, 1.2)
+        }
+      }
+    }
+    ctx.globalAlpha = 1
+  }
+
+  function resizeDither() {
+    const ratio = window.devicePixelRatio || 1
+    const rect = canvas.getBoundingClientRect()
+    const w = Math.max(700, Math.round(rect.width * ratio))
+    const h = Math.max(220, Math.round(rect.height * ratio))
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width = w
+      canvas.height = h
+      drawDither()
+    }
+  }
+
+  const fx = new LiquidDistort(fxLayer, {
     mode: 'swirl',
     shape: 'ellipse',
     trigger: 'always',
-    radius: 210,
-    strength: 98,
-    aspectRatio: 1.35,
-    follow: 0.92,
-    falloff: 'cosine',
-    spring: true,
-    decay: 1.05,
-    tail: 0.12,
-    tailLength: 54,
-  })
-
-  const cardFx = cards.map((card) => new LiquidDistort(card, {
-    mode: 'attract',
-    shape: 'ellipse',
-    trigger: 'hover',
-    radius: 108,
+    radius: 140,
     strength: 42,
-    aspectRatio: 1.2,
-    follow: 0.94,
+    aspectRatio: 1.35,
+    follow: 0.2,
+    spring: false,
     falloff: 'cosine',
-    spring: true,
-    decay: 0.75,
-    tail: 0.04,
-    tailLength: 20,
+    tail: 0,
+    tailLength: 0,
     resolution: 0.3,
-  }))
+  })
 
-  const revealObserver = new IntersectionObserver((entries) => {
-    for (const entry of entries) {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible')
-      }
+  copyBtn.addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(cmd)
+      copyBtn.textContent = 'COPIED'
+      setTimeout(() => (copyBtn.textContent = 'COPY'), 1200)
+    } catch {
+      copyBtn.textContent = 'FAILED'
+      setTimeout(() => (copyBtn.textContent = 'COPY'), 1200)
     }
-  }, { threshold: 0.15 })
-
-  document.querySelectorAll('.reveal').forEach((el, idx) => {
-    el.style.transitionDelay = `${idx * 70}ms`
-    revealObserver.observe(el)
   })
 
-  cards.forEach((card) => {
-    card.addEventListener('pointermove', (event) => {
-      const rect = card.getBoundingClientRect()
-      const x = ((event.clientX - rect.left) / rect.width) * 100
-      const y = ((event.clientY - rect.top) / rect.height) * 100
-      card.style.setProperty('--mx', `${x.toFixed(1)}%`)
-      card.style.setProperty('--my', `${y.toFixed(1)}%`)
-    })
-  })
-
-  window.addEventListener('beforeunload', () => {
-    heroFx.destroy()
-    cardFx.forEach((fx) => fx.destroy())
-  })
+  window.addEventListener('resize', resizeDither)
+  resizeDither()
+  window.addEventListener('beforeunload', () => fx.destroy())
 </script>
 </body>
 </html>
